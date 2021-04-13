@@ -70,7 +70,9 @@ app.post('/register', (req, res) => {
   if (req.cookies['user_id']) {
     const existedEmail = JSON.parse(req.cookies['user_id']).email;
     if (email === existedEmail) {
-      return res.status(400).json({ ErrorMsg: `${res.statusCode}, User with ${email} already exist, please login or register new user.` });
+      return res
+        .status(400)
+        .json({ ErrorMsg: `${res.statusCode}, User with ${email} already exist, please login or register new user.` });
     }
   }
   const userRandomID = `user${generateRandomString()}`;
@@ -89,18 +91,29 @@ app.get('/login', (req, res) => {
 // Login user:
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  const existedEmail = req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email;
-  const existedPassword = req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).password;
-  if (email === existedEmail && password === existedPassword) {
-    res.redirect('urls');
+  if (!req.cookies['user_id']) {
+    res.redirect('register');
   } else {
-    return res.status(404).json({ ErrorMsg: `${res.statusCode}, Email or/and Password don't match with credentials` });
+    const existedEmail = JSON.parse(req.cookies['user_id']).email;
+    const existedPassword = JSON.parse(req.cookies['user_id']).password;
+    if (!existedEmail) {
+      return res.status(403).json({ ErrorMsg: `${res.statusCode} user with ${email} cannot be found` });
+    } else {
+      if (email !== existedEmail) {
+        return res.status(403).json({ ErrorMsg: `${res.statusCode} user email do NOT match` });
+      } else if (email === existedEmail && password !== existedPassword) {
+        return res.status(403).json({ ErrorMsg: `${res.statusCode} password do NOT match` });
+      } else {
+        // res.cookie('user_id', req.cookies['user_id'].id);
+        res.redirect('urls');
+      }
+    }
   }
 });
 
 // Logout user:
 app.post('/logout', (req, res) => {
-  // res.clearCookie('user_id');
+  res.clearCookie('user_id');
   res.redirect('/login');
 });
 
