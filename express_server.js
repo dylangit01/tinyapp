@@ -95,8 +95,8 @@ app.get('/login', (req, res) => {
 
 // Logout user:
 app.post('/logout', (req, res) => {
-  res.clearCookie('username');
-  res.redirect('/urls');
+  res.clearCookie('user_id');
+  res.redirect('/login');
 });
 
 // Show all urls:
