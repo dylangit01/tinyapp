@@ -1,3 +1,19 @@
-<% if(username) { %>
+<!-- <% if(username) { %>
 <h1><%= username %> </h1>
+	<% } %> -->
+
+	<!-- <h1>
+		<%= username ? `Hello ${username}` : 'Hello Guest' %>
+	</h1> -->
+
+<% if(username) {%>
+		<p>Logged In As: TinyApp User!</p>
+		<% } else {%>
+			<form class="form-inline justify-content-end align-content-center" style="height: 3rem;" action="/login" method="POST">
+	<div class="form-group">
+		<label for="username" style="color: #fff;">User Name:</label>
+		<input class="form-control" type="text" name="username" placeholder="Please enter username" style="width: 300px; margin: 1em">
+		<button type="submit" class="btn btn-primary">Sign In</button>
+	</div>
+</form>
 	<% } %>

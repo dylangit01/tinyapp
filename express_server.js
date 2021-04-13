@@ -26,7 +26,6 @@ app.get('/hello', (req, res) => {
     greeting: 'Hello World!!!!!!',
     username: req.cookies['username'],
   };
-  console.log(req.cookies['username']);
   res.render('hello_world', templateVars);
 });
 
@@ -49,13 +48,17 @@ app.post('/login', (req, res) => {
 
 // Show all urls:
 app.get('/urls', (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = {
+    urls: urlDatabase,
+    username: req.cookies['username'],
+  };
   res.render('urls_index', templateVars);
 });
 
 // Add new url:
 app.get('/urls/new', (req, res) => {
-  res.render('urls_new');
+  const templateVars = { username: req.cookies['username'] };
+  res.render('urls_new', templateVars);
 });
 
 // Create new url:
@@ -67,7 +70,11 @@ app.post('/urls', (req, res) => {
 
 // Show added shortURL:
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
+  const templateVars = {
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies['username'],
+  };
   res.render('urls_show', templateVars);
 });
 
