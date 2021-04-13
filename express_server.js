@@ -3,14 +3,17 @@ const cookieParser = require('cookie-parser')
 const app = express();
 const PORT = 8080;
 
+// Setup cookie middleware:
 app.use(cookieParser());
 
 // for body-parser:
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
 
+// Set EJS engine:
 app.set('view engine', 'ejs');
 
+// Database:
 const urlDatabase = {
   b2xVn2: 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com',
@@ -29,6 +32,7 @@ app.get('/hello', (req, res) => {
   res.render('hello_world', templateVars);
 });
 
+// Random string generator:
 const generateRandomString = () => {
   const stringList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   let randomString = '';
