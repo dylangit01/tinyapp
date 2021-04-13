@@ -11,7 +11,7 @@ app.set('view engine', 'ejs');
 const urlDatabase = {
   b2xVn2: 'http://www.lighthouselabs.ca',
   '9sm5xK': 'http://www.google.com',
-  // '4jYxmV': 'https://ca.yahoo.com/',
+  '4jYxmV': 'https://ca.yahoo.com/',
 };
 
 // app.get('/', (req, res) => {
@@ -34,11 +34,13 @@ const generateRandomString = () => {
   return randomString;
 };
 
+// Show all urls:
 app.get('/urls', (req, res) => {
   const templateVars = { urls: urlDatabase };
   res.render('urls_index', templateVars);
 });
 
+// Add new url:
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
 });
@@ -50,14 +52,23 @@ app.post('/urls', (req, res) => {
   res.redirect(`/urls/${shortURL}`);
 });
 
+// Show added shortURL:
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL] };
   res.render('urls_show', templateVars);
 });
 
+// Redirect to longURL:
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+
+// Delete a url:
+app.post('/urls/:shortURL/delete', (req, res) => {
+  const key = req.params.shortURL;
+  delete urlDatabase[key];
+  res.redirect('/urls')
 });
 
 app.get('/urls.json', (req, res) => {
