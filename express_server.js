@@ -1,5 +1,5 @@
 const express = require('express');
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 
@@ -13,25 +13,6 @@ app.use(express.urlencoded({ extended: true }));
 // Set EJS engine:
 app.set('view engine', 'ejs');
 
-// Database:
-const urlDatabase = {
-  b2xVn2: 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com',
-  '4jYxmV': 'https://ca.yahoo.com/',
-};
-
-// app.get('/', (req, res) => {
-//   res.send('Hello!');
-// });
-
-app.get('/hello', (req, res) => {
-  const templateVars = {
-    greeting: 'Hello World!!!!!!',
-    username: req.cookies['username'],
-  };
-  res.render('hello_world', templateVars);
-});
-
 // Random string generator:
 const generateRandomString = () => {
   const stringList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -42,38 +23,81 @@ const generateRandomString = () => {
     randomString += randomLetter;
   }
   return randomString;
-  // return Math.random()*toString(36).substring(2, 8)
+  // return Math.random()*toString(16).substring(2, 8)
 };
 
-// Registration template:
+// Database:
+const urlDatabase = {
+  b2xVn2: 'http://www.lighthouselabs.ca',
+  '9sm5xK': 'http://www.google.com',
+  '4jYxmV': 'https://ca.yahoo.com/',
+};
+
+// User Database:
+const users = {
+  user01: {
+    id: 1,
+    email: 'user01@example.com',
+    password: 'user01',
+  },
+  user02: {
+    id: 2,
+    email: 'user02@example.com',
+    password: 'user02',
+  },
+};
+
+// For testing route:
+app.get('/hello', (req, res) => {
+  const templateVars = {
+    greeting: 'Hello World!!!!!!',
+    userEmail: JSON.parse(req.cookies['user_id']).email,
+  };
+  res.render('hello_world', templateVars);
+});
+
+// Registration template route:
 app.get('/register', (req, res) => {
-  res.render('user_registration')
-})
+  res.render('user_registration');
+});
+
+// Registration handler route:
+app.post('/register', (req, res) => {
+  const { email, password } = req.body;
+  const userRandomID = `user${generateRandomString()}`;
+  users[userRandomID] = { id: `${userRandomID}`, email, password };
+  const userStr = JSON.stringify(users[userRandomID])
+  // console.log(userStr);
+  console.log(JSON.parse(userStr));
+  res.cookie('user_id', userStr);
+  // console.log(users);
+  res.redirect('urls');
+});
 
 // Login user:
 app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username)
-  res.redirect('urls')
-})
+  res.cookie('username', req.body.username);
+  res.redirect('urls');
+});
 
 // Logout user:
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
-  res.redirect('/urls')
-})
+  res.redirect('/urls');
+});
 
 // Show all urls:
 app.get('/urls', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    username: req.cookies['username'],
+    userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email,
   };
   res.render('urls_index', templateVars);
 });
 
 // Add new url:(this route must be placed before '/urls/:shortURL')
 app.get('/urls/new', (req, res) => {
-  const templateVars = { username: req.cookies['username'] };
+  const templateVars = { userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email };
   res.render('urls_new', templateVars);
 });
 
@@ -89,7 +113,7 @@ app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies['username'],
+    userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email,
   };
   res.render('urls_show', templateVars);
 });

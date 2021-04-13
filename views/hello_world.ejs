@@ -1,13 +1,8 @@
-<!-- <% if(username) { %>
-<h1><%= username %> </h1>
-	<% } %> -->
 
-	<!-- <h1>
-		<%= username ? `Hello ${username}` : 'Hello Guest' %>
-	</h1> -->
 
-<% if(username) {%>
+<% if(userEmail) {%>
 		<p>Logged In As: TinyApp User!</p>
+			<h1><%= userEmail %> </h1>
 		<% } else {%>
 			<form class="form-inline justify-content-end align-content-center" style="height: 3rem;" action="/login" method="POST">
 	<div class="form-group">
