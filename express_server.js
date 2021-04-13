@@ -1,6 +1,9 @@
 const express = require('express');
+const cookieParser = require('cookie-parser')
 const app = express();
 const PORT = 8080;
+
+app.use(cookieParser());
 
 // for body-parser:
 app.use(express.json({ extended: true }));
@@ -18,10 +21,14 @@ const urlDatabase = {
 //   res.send('Hello!');
 // });
 
-// app.get('/hello', (req, res) => {
-//   const templateVars = { greeting: 'Hello World!!!!!!' };
-//   res.render('hello_world', templateVars);
-// });
+app.get('/hello', (req, res) => {
+  const templateVars = {
+    greeting: 'Hello World!!!!!!',
+    username: req.cookies['username'],
+  };
+  console.log(req.cookies['username']);
+  res.render('hello_world', templateVars);
+});
 
 const generateRandomString = () => {
   const stringList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
