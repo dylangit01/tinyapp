@@ -11,14 +11,16 @@
 			</div>
 		</div>
 		<% if(username) {%>
-			<div class="mr-3">Logged In As: TinyApp User!</div>
-			<button type="submit" class="btn btn-outline-dark">Logout</button>
+			<div class="mr-3">Logged In As TinyApp User: <%= username %></div>
+			<form class="form-inline align-content-center" action="/logout" method="POST" style="height: 3rem;" >
+				<button type="submit" class="btn btn-outline-dark">Logout</button>
+			</form>
 			<% } else {%>
 				<form class="form-inline justify-content-end align-content-center" style="height: 3rem;" action="/login" method="POST">
 					<div class="form-group">
 						<label for="username" style="color: #fff;">User Name:</label>
 						<input class="form-control" type="text" name="username" placeholder="Please enter username" style="width: 300px; margin: 1em">
-						<button type="submit" class="btn btn-primary">Sign In</button>
+						<button type="submit" class="btn btn-outline-dark">Login</button>
 					</div>
 				</form>
 				<% } %>

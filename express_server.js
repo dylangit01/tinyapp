@@ -46,6 +46,12 @@ app.post('/login', (req, res) => {
   res.redirect('urls')
 })
 
+// Logout user:
+app.post('/logout', (req, res) => {
+  res.clearCookie('username');
+  res.redirect('/urls')
+})
+
 // Show all urls:
 app.get('/urls', (req, res) => {
   const templateVars = {
