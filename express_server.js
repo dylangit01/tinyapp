@@ -70,9 +70,7 @@ app.post('/register', (req, res) => {
   if (req.cookies['user_id']) {
     const existedEmail = JSON.parse(req.cookies['user_id']).email;
     if (email === existedEmail) {
-      return res
-        .status(400)
-        .json({ ErrorMsg: `${res.statusCode}, User with ${email} already exist, please login or register new user.` });
+      return res.status(400).json({ ErrorMsg: `${res.statusCode}, User with ${email} already exist, please login or register new user.` });
     }
   }
   const userRandomID = `user${generateRandomString()}`;
@@ -84,11 +82,16 @@ app.post('/register', (req, res) => {
   res.redirect('urls');
 });
 
+// Login user template:
+app.get('/login', (req, res) => {
+  res.render('user_login')
+})
+
 // Login user:
-app.post('/login', (req, res) => {
-  res.cookie('username', req.body.username);
-  res.redirect('urls');
-});
+// app.post('/login', (req, res) => {
+//   res.cookie('username', req.body.username);
+//   res.redirect('urls');
+// });
 
 // Logout user:
 app.post('/logout', (req, res) => {
