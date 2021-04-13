@@ -44,6 +44,11 @@ const generateRandomString = () => {
   return randomString;
 };
 
+// Registration template:
+app.get('/register', (req, res) => {
+  res.render('user_registration')
+})
+
 // Login user:
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username)
@@ -65,7 +70,7 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
-// Add new url:
+// Add new url:(this route must be placed before '/urls/:shortURL')
 app.get('/urls/new', (req, res) => {
   const templateVars = { username: req.cookies['username'] };
   res.render('urls_new', templateVars);
