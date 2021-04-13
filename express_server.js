@@ -78,9 +78,8 @@ app.post('/register', (req, res) => {
   const userRandomID = `user${generateRandomString()}`;
   users[userRandomID] = { id: `${userRandomID}`, email, password };
   const userStr = JSON.stringify(users[userRandomID]);
-  console.log(JSON.parse(userStr));
   res.cookie('user_id', userStr);
-  res.redirect('urls');
+  res.redirect('/urls');
 });
 
 // Login user template:
@@ -92,7 +91,7 @@ app.get('/login', (req, res) => {
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   if (!req.cookies['user_id']) {
-    res.redirect('register');
+    res.redirect('/register');
   } else {
     const existedEmail = JSON.parse(req.cookies['user_id']).email;
     const existedPassword = JSON.parse(req.cookies['user_id']).password;
@@ -105,7 +104,7 @@ app.post('/login', (req, res) => {
         return res.status(403).json({ ErrorMsg: `${res.statusCode} password do NOT match` });
       } else {
         // res.cookie('user_id', req.cookies['user_id'].id);
-        res.redirect('urls');
+        res.redirect('/urls');
       }
     }
   }
@@ -128,8 +127,12 @@ app.get('/urls', (req, res) => {
 
 // Add new url:(this route must be placed before '/urls/:shortURL')
 app.get('/urls/new', (req, res) => {
-  const templateVars = { userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email };
+  if (req.cookies['user_id']) {
+    const templateVars = { userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email };
   res.render('urls_new', templateVars);
+  } else {
+    res.redirect('/login')
+  }
 });
 
 // Create new url:
