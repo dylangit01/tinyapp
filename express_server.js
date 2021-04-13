@@ -36,14 +36,14 @@ const urlDatabase = {
 // User Database:
 const users = {
   user01: {
-    id: 1,
-    email: 'user01@example.com',
-    password: 'user01',
+    id: '',
+    email: '',
+    password: '',
   },
   user02: {
-    id: 2,
-    email: 'user02@example.com',
-    password: 'user02',
+    id: '',
+    email: '',
+    password: '',
   },
 };
 
@@ -78,24 +78,29 @@ app.post('/register', (req, res) => {
   const userStr = JSON.stringify(users[userRandomID]);
   console.log(JSON.parse(userStr));
   res.cookie('user_id', userStr);
-  // console.log(users);
   res.redirect('urls');
 });
 
 // Login user template:
 app.get('/login', (req, res) => {
-  res.render('user_login')
-})
+  res.render('user_login');
+});
 
 // Login user:
-// app.post('/login', (req, res) => {
-//   res.cookie('username', req.body.username);
-//   res.redirect('urls');
-// });
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  const existedEmail = req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email;
+  const existedPassword = req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).password;
+  if (email === existedEmail && password === existedPassword) {
+    res.redirect('urls');
+  } else {
+    return res.status(404).json({ ErrorMsg: `${res.statusCode}, Email or/and Password don't match with credentials` });
+  }
+});
 
 // Logout user:
 app.post('/logout', (req, res) => {
-  res.clearCookie('user_id');
+  // res.clearCookie('user_id');
   res.redirect('/login');
 });
 
