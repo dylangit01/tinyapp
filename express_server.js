@@ -64,10 +64,20 @@ app.get('/register', (req, res) => {
 // Registration handler route:
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(404).json({ ErrorMsg: `${res.statusCode}, please enter valid email and password.` });
+  }
+  if (req.cookies['user_id']) {
+    const existedEmail = JSON.parse(req.cookies['user_id']).email;
+    if (email === existedEmail) {
+      return res
+        .status(400)
+        .json({ ErrorMsg: `${res.statusCode}, User with ${email} already exist, please login or register new user.` });
+    }
+  }
   const userRandomID = `user${generateRandomString()}`;
   users[userRandomID] = { id: `${userRandomID}`, email, password };
-  const userStr = JSON.stringify(users[userRandomID])
-  // console.log(userStr);
+  const userStr = JSON.stringify(users[userRandomID]);
   console.log(JSON.parse(userStr));
   res.cookie('user_id', userStr);
   // console.log(users);
