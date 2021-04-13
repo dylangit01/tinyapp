@@ -34,6 +34,12 @@ const generateRandomString = () => {
   return randomString;
 };
 
+// Login user:
+app.post('/login', (req, res) => {
+  res.cookie('username', req.body.username)
+  res.redirect('urls')
+})
+
 // Show all urls:
 app.get('/urls', (req, res) => {
   const templateVars = { urls: urlDatabase };
