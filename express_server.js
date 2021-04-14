@@ -46,15 +46,20 @@ const urlDatabase = {
 
 // User Database:
 const users = {
-  user01: {
-    id: '',
-    email: '',
-    password: '',
+  rHrJoy: {
+    id: 'rHrJoy',
+    email: 'user01@gmail.com',
+    password: 'user01',
   },
-  user02: {
-    id: '',
-    email: '',
-    password: '',
+  JAc4Kn: {
+    id: 'JAc4Kn',
+    email: 'user02@gmail.com',
+    password: 'user02',
+  },
+  aJ48lW: {
+    id: 'aJ48lW',
+    email: 'user03@gmail.com',
+    password: 'user03',
   },
 };
 
@@ -62,7 +67,7 @@ const users = {
 app.get('/hello', (req, res) => {
   const templateVars = {
     greeting: 'Hello World!!!!!!',
-    userEmail: JSON.parse(req.cookies['user_id']).email,
+    userEmail: req.cookies['user_id'],
   };
   res.render('hello_world', templateVars);
 });
@@ -72,55 +77,58 @@ app.get('/register', (req, res) => {
   res.render('user_registration');
 });
 
-// Registration handler route:
-app.post('/register', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(404).json({ ErrorMsg: `${res.statusCode}, please enter valid email and password.` });
-  }
-  if (req.cookies['user_id']) {
-    const existedEmail = JSON.parse(req.cookies['user_id']).email;
-    if (email === existedEmail) {
-      return res
-        .status(400)
-        .json({ ErrorMsg: `${res.statusCode}, User with ${email} already exist, please login or register new user.` });
+// createNewUser fn:
+const createNewUser = (email, password) => {
+  for (let userKey in users) {
+    if (users[userKey].email === email) {
+      return { error: `User with ${email} already exist, please login or register new user`, data: null };
     }
   }
-  const userRandomID = `user${generateRandomString()}`;
-  users[userRandomID] = { id: `${userRandomID}`, email, password };
-  const userStr = JSON.stringify(users[userRandomID]);
-  // console.log(users);
-  res.cookie('user_obj', userStr);
-  res.cookie('user_id', `${userRandomID}`);
+  if (!email || !password) {
+    return { error: 'please enter valid email and password', data: null };
+  }
+  const userID = generateRandomString();
+  users[userID] = { id: userID, email, password };
+  return { error: null, data: { userID, email, password } };
+};
+
+app.post('/register', (req, res) => {
+  const { email, password } = req.body;
+  const result = createNewUser(email, password);
+  if (result.error) {
+    return res.status(403).json({ ErrorMsg: result.error });
+  }
+  console.log(users);
+  res.cookie('user_id', result.data.userID);
   res.redirect('/urls');
 });
 
-// Login user template:
+// Render user template:
 app.get('/login', (req, res) => {
   res.render('user_login');
 });
 
-// Login user:
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!req.cookies['user_obj']) {
-    res.redirect('/register');
-  } else {
-    const existedEmail = JSON.parse(req.cookies['user_obj']).email;
-    const existedPassword = JSON.parse(req.cookies['user_obj']).password;
-    if (!existedEmail) {
-      return res.status(403).json({ ErrorMsg: `${res.statusCode} user with ${email} cannot be found` });
-    } else {
-      if (email !== existedEmail) {
-        return res.status(403).json({ ErrorMsg: `${res.statusCode} user email do NOT match` });
-      } else if (email === existedEmail && password !== existedPassword) {
-        return res.status(403).json({ ErrorMsg: `${res.statusCode} password do NOT match` });
+const validateLogin = (email, password) => {
+  for (let key in users) {
+    if (users[key].email === email) {
+      if (users[key].password === password) {
+        return { error: null, data: users[key] };
       } else {
-        res.cookie('user_id', JSON.parse(req.cookies['user_obj']).id);
-        res.redirect('/urls');
+        return { error: 'Password do NOT match', data: null };
       }
     }
   }
+  return { error: `User with ${email} cannot be found`, data: null };
+};
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+  const result = validateLogin(email, password);
+  if (result.error) {
+    return res.status(403).json({ ErrorMsg: result.error });
+  }
+  res.cookie('user_id', result.data.id);
+  res.redirect('/urls');
 });
 
 // Logout user:
