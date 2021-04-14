@@ -1,8 +1,8 @@
 
 
-<% if(userEmail) {%>
+<% if(userID) {%>
 		<p>Logged In As: TinyApp User!</p>
-			<h1><%= userEmail %> </h1>
+			<h1><%= userID %> </h1>
 		<% } else {%>
 			<form class="form-inline justify-content-end align-content-center" style="height: 3rem;" action="/login" method="POST">
 	<div class="form-group">

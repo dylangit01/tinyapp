@@ -28,9 +28,8 @@ const generateRandomString = () => {
 
 // Database:
 const urlDatabase = {
-  b2xVn2: 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com',
-  '4jYxmV': 'https://ca.yahoo.com/',
+  b6UTxQ: { longURL: 'https://www.tsn.ca', userID: 'aJ48lW' },
+  i3BoGr: { longURL: 'https://www.google.ca', userID: 'aJ48lW' },
 };
 
 // User Database:
@@ -78,7 +77,9 @@ app.post('/register', (req, res) => {
   const userRandomID = `user${generateRandomString()}`;
   users[userRandomID] = { id: `${userRandomID}`, email, password };
   const userStr = JSON.stringify(users[userRandomID]);
-  res.cookie('user_id', userStr);
+  // console.log(users);
+  res.cookie('user_obj', userStr);
+  res.cookie('user_id', `${userRandomID}`);
   res.redirect('/urls');
 });
 
@@ -90,11 +91,11 @@ app.get('/login', (req, res) => {
 // Login user:
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  if (!req.cookies['user_id']) {
+  if (!req.cookies['user_obj']) {
     res.redirect('/register');
   } else {
-    const existedEmail = JSON.parse(req.cookies['user_id']).email;
-    const existedPassword = JSON.parse(req.cookies['user_id']).password;
+    const existedEmail = JSON.parse(req.cookies['user_obj']).email;
+    const existedPassword = JSON.parse(req.cookies['user_obj']).password;
     if (!existedEmail) {
       return res.status(403).json({ ErrorMsg: `${res.statusCode} user with ${email} cannot be found` });
     } else {
@@ -103,7 +104,7 @@ app.post('/login', (req, res) => {
       } else if (email === existedEmail && password !== existedPassword) {
         return res.status(403).json({ ErrorMsg: `${res.statusCode} password do NOT match` });
       } else {
-        // res.cookie('user_id', req.cookies['user_id'].id);
+        res.cookie('user_id', JSON.parse(req.cookies['user_obj']).id);
         res.redirect('/urls');
       }
     }
@@ -120,7 +121,7 @@ app.post('/logout', (req, res) => {
 app.get('/urls', (req, res) => {
   const templateVars = {
     urls: urlDatabase,
-    userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email,
+    userID: req.cookies['user_id'],
   };
   res.render('urls_index', templateVars);
 });
@@ -128,17 +129,17 @@ app.get('/urls', (req, res) => {
 // Add new url:(this route must be placed before '/urls/:shortURL')
 app.get('/urls/new', (req, res) => {
   if (req.cookies['user_id']) {
-    const templateVars = { userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email };
-  res.render('urls_new', templateVars);
+    const templateVars = { userID: req.cookies['user_id'] };
+    res.render('urls_new', templateVars);
   } else {
-    res.redirect('/login')
+    res.redirect('/login');
   }
 });
 
 // Create new url:
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = { longURL: req.body.longURL, userID: req.cookies['user_id'] };
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -146,22 +147,22 @@ app.post('/urls', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
-    userEmail: req.cookies['user_id'] && JSON.parse(req.cookies['user_id']).email,
+    longURL: urlDatabase[req.params.shortURL].longURL,
+    userID: req.cookies['user_id'],
   };
   res.render('urls_show', templateVars);
 });
 
 // Redirect to longURL:
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
 // Update a url:
 app.post('/urls/:id', (req, res) => {
   const urlID = req.params.id;
-  urlDatabase[urlID] = req.body.longURL;
+  urlDatabase[urlID].longURL = req.body.longURL;
   res.redirect('/urls');
 });
 

@@ -10,8 +10,8 @@
 				<a class="nav-item nav-link" href="/urls/new">Create New URL</a>
 			</div>
 		</div>
-		<% if(userEmail) {%>
-			<div class="mr-3">Logged In As TinyApp User: <%= userEmail %></div>
+		<% if(userID) {%>
+			<div class="mr-3">Logged In As TinyApp User: <%= userID%></div>
 			<form class="form-inline align-content-center mr-3" action="/logout" method="POST" style="height: 3rem;" >
 				<button type="submit" class="btn btn-outline-dark">Logout</button>
 			</form>
