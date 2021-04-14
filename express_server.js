@@ -42,7 +42,7 @@ const users = {
   },
 };
 
-const { urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
+const {generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
 
 // For testing route:
 app.get('/hello', (req, res) => {

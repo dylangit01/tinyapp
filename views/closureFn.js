@@ -53,7 +53,7 @@ const allHelperFnClosure = (users, urlDatabase) => {
     }
     return { error: `User with ${email} cannot be found`, data: null };
   };
-  return { urlsForUser, createNewUser, validateLogin };
+  return { generateRandomString, urlsForUser, createNewUser, validateLogin };
 };
 
 module.exports = allHelperFnClosure;
