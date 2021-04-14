@@ -27,6 +27,17 @@ const generateRandomString = () => {
   // return Math.random()*toString(16).substring(2, 8)
 };
 
+// Help fun: filter urlsObj only for matched userID
+const urlsForUser = (id) => {
+  const urlsObj = {};
+  for (let key in urlDatabase) {
+    if (urlDatabase[key].userID === id) {
+      urlsObj[key] = urlDatabase[key];
+    }
+  }
+  return urlsObj;
+};
+
 // Database:
 const urlDatabase = {
   b6UTxQ: { longURL: 'https://www.tsn.ca', userID: 'aJ48lW' },
@@ -121,14 +132,8 @@ app.post('/logout', (req, res) => {
 // Show all urls:
 app.get('/urls', (req, res) => {
   if (req.cookies['user_id']) {
-    const urlsOjb = {};
-    for (let key in urlDatabase) {
-      if (urlDatabase[key].userID === req.cookies['user_id']) {
-        urlsOjb[key] = urlDatabase[key];
-      }
-    }
     const templateVars = {
-      urls: urlsOjb,
+      urls: urlsForUser(req.cookies['user_id']),
       userID: req.cookies['user_id'],
     };
     res.render('urls_index', templateVars);
@@ -144,6 +149,7 @@ app.get('/urls/new', (req, res) => {
     const templateVars = { userID: req.cookies['user_id'] };
     res.render('urls_new', templateVars);
   } else {
+    alert('Please login or register a new account');
     res.redirect('/login');
   }
 });
@@ -157,12 +163,17 @@ app.post('/urls', (req, res) => {
 
 // Show added shortURL:
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    userID: req.cookies['user_id'],
-  };
-  res.render('urls_show', templateVars);
+  if (req.cookies['user_id']) {
+    const templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL,
+      userID: req.cookies['user_id'],
+    };
+    res.render('urls_show', templateVars);
+  } else {
+    alert('Please login or register a new account');
+    res.redirect('/login');
+  }
 });
 
 // Redirect to longURL:
@@ -173,16 +184,26 @@ app.get('/u/:shortURL', (req, res) => {
 
 // Update a url:
 app.post('/urls/:id', (req, res) => {
-  const urlID = req.params.id;
-  urlDatabase[urlID].longURL = req.body.longURL;
-  res.redirect('/urls');
+  if (req.cookies['user_id']) {
+    const urlID = req.params.id;
+    urlDatabase[urlID].longURL = req.body.longURL;
+    res.redirect('/urls');
+  } else {
+    alert('Please login or register a new account');
+    res.redirect('/login');
+  }
 });
 
 // Delete a url:
 app.post('/urls/:shortURL/delete', (req, res) => {
-  const key = req.params.shortURL;
-  delete urlDatabase[key];
-  res.redirect('/urls');
+  if (req.cookies['user_id']) {
+    const key = req.params.shortURL;
+    delete urlDatabase[key];
+    res.redirect('/urls');
+  } else {
+    alert('Please login or register a new account');
+    res.redirect('/login');
+  }
 });
 
 app.get('/urls.json', (req, res) => {
