@@ -2,6 +2,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
+const alert = require('alert');
 
 // Setup cookie middleware:
 app.use(cookieParser());
@@ -119,11 +120,22 @@ app.post('/logout', (req, res) => {
 
 // Show all urls:
 app.get('/urls', (req, res) => {
-  const templateVars = {
-    urls: urlDatabase,
-    userID: req.cookies['user_id'],
-  };
-  res.render('urls_index', templateVars);
+  if (req.cookies['user_id']) {
+    const urlsOjb = {};
+    for (let key in urlDatabase) {
+      if (urlDatabase[key].userID === req.cookies['user_id']) {
+        urlsOjb[key] = urlDatabase[key];
+      }
+    }
+    const templateVars = {
+      urls: urlsOjb,
+      userID: req.cookies['user_id'],
+    };
+    res.render('urls_index', templateVars);
+  } else {
+    alert('Please login or register a new account');
+    res.redirect('/login');
+  }
 });
 
 // Add new url:(this route must be placed before '/urls/:shortURL')
