@@ -4,6 +4,8 @@ const app = express();
 const PORT = 8080;
 const alert = require('alert');
 
+const allHelperFnClosure = require('./views/closureFn');
+
 // Setup cookie middleware:
 app.use(cookieParser());
 
@@ -13,30 +15,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // Set EJS engine:
 app.set('view engine', 'ejs');
-
-// Random string generator:
-const generateRandomString = () => {
-  const stringList = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  let randomString = '';
-  for (let i = 0; i <= 5; i++) {
-    let randomNum = Math.floor(Math.random() * stringList.length);
-    let randomLetter = stringList[randomNum];
-    randomString += randomLetter;
-  }
-  return randomString;
-  // return Math.random()*toString(16).substring(2, 8)
-};
-
-// Help fun: filter urlsObj only for matched userID
-const urlsForUser = (id) => {
-  const urlsObj = {};
-  for (let key in urlDatabase) {
-    if (urlDatabase[key].userID === id) {
-      urlsObj[key] = urlDatabase[key];
-    }
-  }
-  return urlsObj;
-};
 
 // Database:
 const urlDatabase = {
@@ -63,6 +41,8 @@ const users = {
   },
 };
 
+const { urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
+
 // For testing route:
 app.get('/hello', (req, res) => {
   const templateVars = {
@@ -77,21 +57,6 @@ app.get('/register', (req, res) => {
   res.render('user_registration');
 });
 
-// createNewUser fn:
-const createNewUser = (email, password) => {
-  for (let userKey in users) {
-    if (users[userKey].email === email) {
-      return { error: `User with ${email} already exist, please login or register new user`, data: null };
-    }
-  }
-  if (!email || !password) {
-    return { error: 'please enter valid email and password', data: null };
-  }
-  const userID = generateRandomString();
-  users[userID] = { id: userID, email, password };
-  return { error: null, data: { userID, email, password } };
-};
-
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
   const result = createNewUser(email, password);
@@ -103,24 +68,12 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
-// Render user template:
+// Render user login template:
 app.get('/login', (req, res) => {
   res.render('user_login');
 });
 
-const validateLogin = (email, password) => {
-  for (let key in users) {
-    if (users[key].email === email) {
-      if (users[key].password === password) {
-        return { error: null, data: users[key] };
-      } else {
-        return { error: 'Password do NOT match', data: null };
-      }
-    }
-  }
-  return { error: `User with ${email} cannot be found`, data: null };
-};
-
+// Login route:
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const result = validateLogin(email, password);
@@ -131,7 +84,7 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
-// Logout user:
+// Logout route:
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/login');
