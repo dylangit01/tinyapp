@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const allHelperFnClosure = (users, urlDatabase) => {
   // Random string generator:
   const generateRandomString = () => {
@@ -36,12 +38,13 @@ const allHelperFnClosure = (users, urlDatabase) => {
     const userID = generateRandomString();
     users[userID] = { id: userID, email, password };
     return { error: null, data: { userID, email, password } };
-	};
+  };
 
-	const validateLogin = (email, password) => {
+  const validateLogin = (email, password) => {
     for (let key in users) {
       if (users[key].email === email) {
-        if (users[key].password === password) {
+        const res = bcrypt.compareSync(password, users[key].password);
+        if (res) {
           return { error: null, data: users[key] };
         } else {
           return { error: 'Password do NOT match', data: null };
@@ -51,6 +54,6 @@ const allHelperFnClosure = (users, urlDatabase) => {
     return { error: `User with ${email} cannot be found`, data: null };
   };
   return { urlsForUser, createNewUser, validateLogin };
-}
+};
 
 module.exports = allHelperFnClosure;

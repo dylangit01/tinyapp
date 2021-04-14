@@ -1,5 +1,6 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080;
 const alert = require('alert');
@@ -37,7 +38,7 @@ const users = {
   aJ48lW: {
     id: 'aJ48lW',
     email: 'user03@gmail.com',
-    password: 'user03',
+    password: '$2b$10$/msnEHRHDN9v7Z6BlnGBDebKTKfXpjqP3tlDliG5DN0sQt3DEEth2',
   },
 };
 
@@ -59,7 +60,9 @@ app.get('/register', (req, res) => {
 
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
-  const result = createNewUser(email, password);
+  const hashedPassword = bcrypt.hashSync(password, 10)
+  console.log(hashedPassword);
+  const result = createNewUser(email, hashedPassword);
   if (result.error) {
     return res.status(403).json({ ErrorMsg: result.error });
   }
