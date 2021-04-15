@@ -57,7 +57,7 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
 app.get('/hello', (req, res) => {
   const templateVars = {
     greeting: 'Hello World!!!!!!',
-    userEmail: req.session.user_id,
+    userEmail: users[req.session.user_id].email,
   };
   res.render('hello_world', templateVars);
 });
@@ -106,7 +106,7 @@ app.get('/urls', (req, res) => {
   if (req.session.user_id) {
     const templateVars = {
       urls: urlsForUser(req.session.user_id),
-      userID: req.session.user_id,
+      userEmail: users[req.session.user_id].email,
     };
     res.render('urls_index', templateVars);
   } else {
@@ -118,7 +118,7 @@ app.get('/urls', (req, res) => {
 // Add new url:(this route must be placed before '/urls/:shortURL')
 app.get('/urls/new', (req, res) => {
   if (req.session.user_id) {
-    const templateVars = { userID: req.session.user_id };
+    const templateVars = { userEmail: users[req.session.user_id].email };
     res.render('urls_new', templateVars);
   } else {
     alert('Please login or register a new account');
@@ -139,7 +139,7 @@ app.get('/urls/:shortURL', (req, res) => {
     const templateVars = {
       shortURL: req.params.shortURL,
       longURL: urlDatabase[req.params.shortURL].longURL,
-      userID: req.session.user_id,
+      userEmail: users[req.session.user_id].email,
     };
     res.render('urls_show', templateVars);
   } else {
