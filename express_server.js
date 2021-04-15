@@ -6,7 +6,7 @@ const app = express();
 const PORT = 8080;
 const alert = require('alert');
 
-const allHelperFnClosure = require('./views/closureFn');
+const allHelperFnClosure = require('./views/helpers');
 
 // Setup cookie middleware:
 // app.use(cookieParser());
