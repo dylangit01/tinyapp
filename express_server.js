@@ -190,6 +190,10 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   }
 });
 
+app.get('/users', (req, res) => {
+  res.json(users);
+})
+
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
