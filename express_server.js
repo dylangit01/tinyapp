@@ -2,7 +2,7 @@ const express = require('express');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 const alert = require('alert');
 
 const allHelperFnClosure = require('./views/helpers');
