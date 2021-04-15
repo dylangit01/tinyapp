@@ -1,5 +1,4 @@
 const express = require('express');
-// const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
@@ -9,8 +8,6 @@ const alert = require('alert');
 const allHelperFnClosure = require('./views/helpers');
 
 // Setup cookie middleware:
-// app.use(cookieParser());
-
 app.use(
   cookieSession({
     name: 'session',
@@ -54,13 +51,13 @@ const users = {
 const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
 
 // For testing route:
-app.get('/hello', (req, res) => {
-  const templateVars = {
-    greeting: 'Hello World!!!!!!',
-    userEmail: users[req.session.user_id].email,
-  };
-  res.render('hello_world', templateVars);
-});
+// app.get('/hello', (req, res) => {
+//   const templateVars = {
+//     greeting: 'Hello World!!!!!!',
+//     userEmail: users[req.session.user_id].email,
+//   };
+//   res.render('hello_world', templateVars);
+// });
 
 // Registration template route:
 app.get('/register', (req, res) => {
@@ -81,7 +78,7 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
-// Render user login template:
+// Login template route:
 app.get('/login', (req, res) => {
   res.render('user_login');
 });
