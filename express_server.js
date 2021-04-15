@@ -86,7 +86,11 @@ app.post('/register', (req, res) => {
   const hashedPassword = bcrypt.hashSync(password, 10);
   const result = createNewUser(email, hashedPassword);
   if (result.error) {
-    return res.status(403).send(`<h1>Error ${res.statusCode}: ${result.error}</h1>`);
+    return res
+      .status(403)
+      .send(
+        `<h2 style="display: flex; justify-content: center; align-items: center; height: 100vh; color: #0061a8">Error ${res.statusCode}: ${result.error}</h2>`
+      );
   }
   req.session.user_id = result.data.userID;
   res.redirect('/urls');
@@ -102,7 +106,11 @@ app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const result = validateLogin(email, password);
   if (result.error) {
-    return res.status(403).send(`<h1>Error ${res.statusCode}: ${result.error}</h1>`);
+    return res
+      .status(403)
+      .send(
+        `<h2 style="display: flex; justify-content: center; align-items: center; height: 100vh; color: #0061a8">Error ${res.statusCode}: ${result.error}</h2>`
+      );
   }
   req.session.user_id = result.data.id;
   res.redirect('/urls');
