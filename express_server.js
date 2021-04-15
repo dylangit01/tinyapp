@@ -137,11 +137,12 @@ app.post('/urls', (req, res) => {
 app.get('/urls/:shortURL', (req, res) => {
   if (req.session.user_id) {
     const shortURL = req.params.shortURL;
-    for (let shortKey in urlDatabase) {
+    const result = urlsForUser(req.session.user_id);
+    for (let shortKey in result) {
       if (shortKey === shortURL) {
         const templateVars = {
           shortURL: req.params.shortURL,
-          longURL: urlDatabase[req.params.shortURL].longURL,
+          longURL: result[req.params.shortURL].longURL,
           userEmail: users[req.session.user_id].email,
         };
         return res.render('urls_show', templateVars);
