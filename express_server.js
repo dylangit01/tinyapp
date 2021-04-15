@@ -59,9 +59,16 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
 //   res.render('hello_world', templateVars);
 // });
 
+const userMiddleParser = (req, res, next) => {
+  const userID = req.session.user_id;
+  req.userId = userID;
+  next()
+}
+app.use(userMiddleParser);
+
 // Registration template route:
 app.get('/register', (req, res) => {
-  if (!req.session.user_id) {
+  if (!req.userId) {
     res.render('user_registration');
   } else res.redirect('/urls');
 });
@@ -102,10 +109,10 @@ app.post('/logout', (req, res) => {
 
 // Show all urls:
 app.get('/urls', (req, res) => {
-  if (req.session.user_id) {
+  if (req.userId) {
     const templateVars = {
-      urls: urlsForUser(req.session.user_id),
-      userEmail: users[req.session.user_id].email,
+      urls: urlsForUser(req.userId),
+      userEmail: users[req.userId].email,
     };
     res.render('urls_index', templateVars);
   } else {
@@ -116,8 +123,8 @@ app.get('/urls', (req, res) => {
 
 // Add new url:(this route must be placed before '/urls/:shortURL')
 app.get('/urls/new', (req, res) => {
-  if (req.session.user_id) {
-    const templateVars = { userEmail: users[req.session.user_id].email };
+  if (req.userId) {
+    const templateVars = { userEmail: users[req.userId].email };
     res.render('urls_new', templateVars);
   } else {
     alert('Please login or register a new account');
@@ -128,21 +135,21 @@ app.get('/urls/new', (req, res) => {
 // Create new url:
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = { longURL: req.body.longURL, userID: req.session.user_id };
+  urlDatabase[shortURL] = { longURL: req.body.longURL, userID: req.userId };
   res.redirect(`/urls/${shortURL}`);
 });
 
 // Show added shortURL:
 app.get('/urls/:shortURL', (req, res) => {
-  if (req.session.user_id) {
+  if (req.userId) {
     const shortURL = req.params.shortURL;
-    const result = urlsForUser(req.session.user_id);
+    const result = urlsForUser(req.userId);
     for (let shortKey in result) {
       if (shortKey === shortURL) {
         const templateVars = {
           shortURL: req.params.shortURL,
           longURL: result[req.params.shortURL].longURL,
-          userEmail: users[req.session.user_id].email,
+          userEmail: users[req.userId].email,
         };
         return res.render('urls_show', templateVars);
       }
@@ -168,9 +175,13 @@ app.get('/u/:shortURL', (req, res) => {
 
 // Update a url:
 app.post('/urls/:id', (req, res) => {
-  if (req.session.user_id) {
+  if (req.userId) {
     const urlID = req.params.id;
-    urlDatabase[urlID].longURL = req.body.longURL;
+    if (req.body.longURL) {
+      urlDatabase[urlID].longURL = req.body.longURL
+    } else {
+      return alert('URL cannot be empty')
+    }
     res.redirect('/urls');
   } else {
     alert('Please login or register a new account');
@@ -180,7 +191,7 @@ app.post('/urls/:id', (req, res) => {
 
 // Delete a url:
 app.post('/urls/:shortURL/delete', (req, res) => {
-  if (req.session.user_id) {
+  if (req.userId) {
     const key = req.params.shortURL;
     delete urlDatabase[key];
     res.redirect('/urls');
