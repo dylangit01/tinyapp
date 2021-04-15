@@ -142,7 +142,7 @@ app.post('/urls', (req, res) => {
     urlDatabase[shortURL] = { longURL: req.longURL, userID: req.userId };
   } else {
     alert('URL cannot be empty');
-    res.redirect('/urls/new');
+    return res.redirect('/urls/new');
   }
   res.redirect(`/urls/${shortURL}`);
 });
@@ -189,7 +189,7 @@ app.post('/urls/:id', (req, res) => {
       urlDatabase[urlID].longURL = req.longURL;
     } else {
       alert('URL cannot be empty');
-      res.redirect(`/urls/${urlID}`)
+      return res.redirect(`/urls/${urlID}`)
     }
     res.redirect('/urls');
   } else {
