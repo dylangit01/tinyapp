@@ -25,13 +25,13 @@ const allHelperFnClosure = (users, urlDatabase) => {
     return urlsObj;
   };
 
-  const getUserByEmail = function (email) {
+  const getUserByEmail = (email) => {
     for (let userKey in users) {
       if (users[userKey].email === email) {
         return users[userKey];
       }
     }
-    return null;
+    return undefined;
   };
 
   // createNewUser fn:
@@ -75,7 +75,7 @@ const allHelperFnClosure = (users, urlDatabase) => {
     // return { error: `User with ${email} cannot be found`, data: null };
   };
 
-  return { generateRandomString, urlsForUser, createNewUser, validateLogin };
+  return { generateRandomString, urlsForUser, getUserByEmail, createNewUser, validateLogin };
 };
 
 module.exports = allHelperFnClosure;
