@@ -136,12 +136,19 @@ app.post('/urls', (req, res) => {
 // Show added shortURL:
 app.get('/urls/:shortURL', (req, res) => {
   if (req.session.user_id) {
-    const templateVars = {
-      shortURL: req.params.shortURL,
-      longURL: urlDatabase[req.params.shortURL].longURL,
-      userEmail: users[req.session.user_id].email,
-    };
-    res.render('urls_show', templateVars);
+    const shortURL = req.params.shortURL;
+    for (let shortKey in urlDatabase) {
+      if (shortKey === shortURL) {
+        const templateVars = {
+          shortURL: req.params.shortURL,
+          longURL: urlDatabase[req.params.shortURL].longURL,
+          userEmail: users[req.session.user_id].email,
+        };
+        return res.render('urls_show', templateVars);
+      }
+    }
+    alert(`shortURL: ${shortURL} does not exist`);
+    res.redirect('/urls')
   } else {
     alert('Please login or register a new account');
     res.redirect('/login');
