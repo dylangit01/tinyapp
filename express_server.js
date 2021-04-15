@@ -62,8 +62,8 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
 const userMiddleParser = (req, res, next) => {
   const userID = req.session.user_id;
   req.userId = userID;
-  next()
-}
+  next();
+};
 app.use(userMiddleParser);
 
 // Registration template route:
@@ -178,9 +178,9 @@ app.post('/urls/:id', (req, res) => {
   if (req.userId) {
     const urlID = req.params.id;
     if (req.body.longURL) {
-      urlDatabase[urlID].longURL = req.body.longURL
+      urlDatabase[urlID].longURL = req.body.longURL;
     } else {
-      return alert('URL cannot be empty')
+      return alert('URL cannot be empty');
     }
     res.redirect('/urls');
   } else {
@@ -203,7 +203,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 app.get('/users', (req, res) => {
   res.json(users);
-})
+});
 
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
