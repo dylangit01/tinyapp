@@ -64,7 +64,9 @@ app.get('/hello', (req, res) => {
 
 // Registration template route:
 app.get('/register', (req, res) => {
-  res.render('user_registration');
+  if (!req.session.user_id) {
+    res.render('user_registration');
+  } else res.redirect('/urls');
 });
 
 // Register route:
