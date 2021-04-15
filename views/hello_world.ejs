@@ -1,13 +1,18 @@
-
 <% if(userEmail) {%>
-		<p>Logged In As: TinyApp User!</p>
-			<h1><%= userEmail %> </h1>
-		<% } else {%>
-			<form class="form-inline justify-content-end align-content-center" style="height: 3rem;" action="/login" method="POST">
-	<div class="form-group">
-		<label for="email" style="color: #fff;">User Name:</label>
-		<input class="form-control" type="text" name="email" placeholder="Please enter email" style="width: 300px; margin: 1em">
-		<button type="submit" class="btn btn-primary">Sign In</button>
-	</div>
+<p>Logged In As: TinyApp User!</p>
+<h1><%= userEmail %></h1>
+<% } else {%>
+<form class="form-inline justify-content-end align-content-center" style="height: 3rem" action="/login" method="POST">
+  <div class="form-group">
+    <label for="email" style="color: #fff">User Name:</label>
+    <input
+      class="form-control"
+      type="text"
+      name="email"
+      placeholder="Please enter email"
+      style="width: 300px; margin: 1em"
+    />
+    <button type="submit" class="btn btn-primary">Sign In</button>
+  </div>
 </form>
-	<% } %>
+<% } %>

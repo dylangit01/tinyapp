@@ -1,7 +1,7 @@
 {
   "name": "tinyapp",
   "version": "1.0.0",
-  "description": "",
+  "description": "Tinyapp allows users to shorten long URLs",
   "main": "index.js",
   "scripts": {
     "start": "node express_server.js",
@@ -13,7 +13,7 @@
     "url": "git+https://github.com/dylangit01/tinyapp.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "DylanDu",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/dylangit01/tinyapp/issues"
