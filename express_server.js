@@ -2,10 +2,11 @@ const express = require('express');
 const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
-const app = express();
-const PORT = process.env.PORT || 8080;
 const alert = require('alert');
 const allHelperFnClosure = require('./views/helpers');
+
+const app = express();
+const PORT = process.env.PORT || 8080;
 
 // Setup rest api middleware:
 app.use(methodOverride('_method'));
