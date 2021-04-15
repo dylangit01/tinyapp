@@ -26,9 +26,10 @@ app.set('view engine', 'ejs');
 const urlDatabase = {
   b6UTxQ: { longURL: 'https://www.tsn.ca', userID: 'aJ48lW' },
   i3BoGr: { longURL: 'https://www.google.ca', userID: 'aJ48lW' },
+  ojehsu: { longURL: 'https://www.amazon.ca', userID: 'rHrJoy' },
 };
 
-// User Database:
+// User Database: (password: user01, user02...so on...)
 const users = {
   rHrJoy: {
     id: 'rHrJoy',
@@ -59,12 +60,14 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
 //   res.render('hello_world', templateVars);
 // });
 
-const userMiddleParser = (req, res, next) => {
+const userURLMiddleParser = (req, res, next) => {
   const userID = req.session.user_id;
+  const longURL = req.body.longURL
   req.userId = userID;
+  req.longURL = longURL;
   next();
 };
-app.use(userMiddleParser);
+app.use(userURLMiddleParser);
 
 // Registration template route:
 app.get('/register', (req, res) => {
@@ -135,7 +138,12 @@ app.get('/urls/new', (req, res) => {
 // Create new url:
 app.post('/urls', (req, res) => {
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = { longURL: req.body.longURL, userID: req.userId };
+  if (req.longURL) {
+    urlDatabase[shortURL] = { longURL: req.longURL, userID: req.userId };
+  } else {
+    alert('URL cannot be empty');
+    res.redirect('/urls/new');
+  }
   res.redirect(`/urls/${shortURL}`);
 });
 
@@ -177,10 +185,11 @@ app.get('/u/:shortURL', (req, res) => {
 app.post('/urls/:id', (req, res) => {
   if (req.userId) {
     const urlID = req.params.id;
-    if (req.body.longURL) {
-      urlDatabase[urlID].longURL = req.body.longURL;
+    if (req.longURL) {
+      urlDatabase[urlID].longURL = req.longURL;
     } else {
-      return alert('URL cannot be empty');
+      alert('URL cannot be empty');
+      res.redirect(`/urls/${urlID}`)
     }
     res.redirect('/urls');
   } else {
