@@ -22,7 +22,7 @@
       </div>
       <div class="card-footer text-muted">
         <h1>Edit</h1>
-        <form class="form-inline justify-content-center" action="/urls/<%= shortURL %> " method="POST">
+        <form class="form-inline justify-content-center" method="POST" action="/urls/<%= shortURL%>?_method=PUT">
           <div class="form-group mb-2">
             <label for="longURL">New URL:</label>
             <input

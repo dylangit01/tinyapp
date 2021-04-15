@@ -1,11 +1,14 @@
 const express = require('express');
+const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
 const PORT = process.env.PORT || 8080;
 const alert = require('alert');
-
 const allHelperFnClosure = require('./views/helpers');
+
+// Setup rest api middleware:
+app.use(methodOverride('_method'));
 
 // Setup cookie middleware:
 app.use(
@@ -182,7 +185,7 @@ app.get('/u/:shortURL', (req, res) => {
 });
 
 // Update a url:
-app.post('/urls/:id', (req, res) => {
+app.put('/urls/:id', (req, res) => {
   if (req.userId) {
     const urlID = req.params.id;
     if (req.longURL) {
@@ -199,7 +202,7 @@ app.post('/urls/:id', (req, res) => {
 });
 
 // Delete a url:
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.delete('/urls/:shortURL/delete', (req, res) => {
   if (req.userId) {
     const key = req.params.shortURL;
     delete urlDatabase[key];
