@@ -18,7 +18,7 @@
   <body>
     <%- include('partials/_header') %>
     <div class="container text-center">
-      <main style="margin: 1em">
+      <main style="margin: 1em; height: 79vh">
         <h3>Create TinyURL</h3>
         <form class="form-inline justify-content-center" action="/urls" method="POST">
           <div class="form-group mb-2">
@@ -35,7 +35,7 @@
         </form>
       </main>
     </div>
-
+    <%- include('partials/_footer') %>
     <!-- Bootstrap JS -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

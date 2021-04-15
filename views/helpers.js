@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 
 const allHelperFnClosure = (users, urlDatabase) => {
-  // Random string generator:
+
   const generateRandomString = () => {
     return Math.random().toString(36).substring(2, 8);
   };
@@ -26,7 +26,6 @@ const allHelperFnClosure = (users, urlDatabase) => {
     return undefined;
   };
 
-  // createNewUser fn:
   const createNewUser = (email, password) => {
     if (!email || !password) {
       return { error: 'Email and Password cannot be empty', data: null };
