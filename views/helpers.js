@@ -31,11 +31,6 @@ const allHelperFnClosure = (users, urlDatabase) => {
     if (!email || !password) {
       return { error: 'Email and Password cannot be empty', data: null };
     }
-    // for (let userKey in users) {
-    //   if (users[userKey].email === email) {
-    //     return { error: `User with ${email} already exist, please login or register new user`, data: null };
-    //   }
-    // }
     const user = getUserByEmail(email);
     if (user) {
       return { error: `User with ${email} already exists, please login or register new account`, data: null };
@@ -58,6 +53,9 @@ const allHelperFnClosure = (users, urlDatabase) => {
 };
 
 module.exports = allHelperFnClosure;
+
+
+
 
 
 
