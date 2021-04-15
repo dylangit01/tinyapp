@@ -11,10 +11,12 @@ const allHelperFnClosure = require('./views/closureFn');
 // Setup cookie middleware:
 // app.use(cookieParser());
 
-app.use(cookieSession({
-  name: 'session',
-  keys: ['user_id'],
-}))
+app.use(
+  cookieSession({
+    name: 'session',
+    keys: ['user_id'],
+  })
+);
 
 // for body-parser:
 app.use(express.json({ extended: true }));
@@ -48,7 +50,7 @@ const users = {
   },
 };
 
-const {generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
+const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
 
 // For testing route:
 app.get('/hello', (req, res) => {
@@ -64,6 +66,7 @@ app.get('/register', (req, res) => {
   res.render('user_registration');
 });
 
+// Register route:
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, 10);
