@@ -59,7 +59,7 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
 // app.get('/hello', (req, res) => {
 //   const templateVars = {
 //     greeting: 'Hello World!!!!!!',
-//     userEmail: users[req.session.user_id].email,
+//     userEmail: users[req.userId].email,
 //   };
 //   res.render('hello_world', templateVars);
 // });
