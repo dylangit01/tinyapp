@@ -149,7 +149,7 @@ app.get('/urls/:shortURL', (req, res) => {
       }
     }
     alert(`shortURL: ${shortURL} does not exist`);
-    res.redirect('/urls')
+    res.redirect('/urls');
   } else {
     alert('Please login or register a new account');
     res.redirect('/login');
@@ -158,8 +158,13 @@ app.get('/urls/:shortURL', (req, res) => {
 
 // Redirect to longURL:
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL].longURL;
-  res.redirect(longURL);
+  const longURL = urlDatabase[req.params.shortURL]?.longURL;
+  if (longURL) {
+    res.redirect(longURL);
+  } else {
+    alert(`No URL matches ${req.params.shortURL}`);
+    res.redirect('/login');
+  }
 });
 
 // Update a url:
