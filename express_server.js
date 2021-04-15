@@ -36,12 +36,12 @@ const users = {
   rHrJoy: {
     id: 'rHrJoy',
     email: 'user01@gmail.com',
-    password: 'user01',
+    password: '$2b$10$0Rd2NqGDNHeQtsGiBI5hkeXqltUw5VBvahJoWUuHiPGh0kRVmdq1W',
   },
   JAc4Kn: {
     id: 'JAc4Kn',
     email: 'user02@gmail.com',
-    password: 'user02',
+    password: '$2b$10$i11xOK.GU2EwgH3NCIm1YukhD4jbqEdWmdrU604s/ij1bolK6XDZu',
   },
   aJ48lW: {
     id: 'aJ48lW',
@@ -50,6 +50,7 @@ const users = {
   },
 };
 
+// Require helper fns:
 const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
 
 // For testing route:
@@ -74,7 +75,6 @@ app.post('/register', (req, res) => {
   if (result.error) {
     return res.status(403).json({ ErrorMsg: result.error });
   }
-  // res.cookie('user_id', result.data.userID);
   req.session.user_id = result.data.userID;
   res.redirect('/urls');
 });
@@ -91,7 +91,6 @@ app.post('/login', (req, res) => {
   if (result.error) {
     return res.status(403).json({ ErrorMsg: result.error });
   }
-  // res.cookie('user_id', result.data.id);
   req.session.user_id = result.data.id;
   res.redirect('/urls');
 });
