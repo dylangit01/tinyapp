@@ -174,8 +174,8 @@ app.get('/u/:shortURL', (req, res) => {
   if (longURL) {
     res.redirect(longURL);
   } else {
-    alert(`No URL matches shortURL: ${req.params.shortURL}`);
-    res.redirect('/login');
+    alert(`No URL matches: ${req.params.shortURL}`);
+    res.redirect('/');
   }
 });
 
