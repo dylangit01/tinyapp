@@ -3,7 +3,7 @@ const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const alert = require('alert');
 const allHelperFnClosure = require('./views/helpers');
-const { urlDatabase, users } = require('./database')
+const { urlDatabase, usersDatabase } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -27,7 +27,10 @@ app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 
 // Require helper fns:
-const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
+const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(
+  usersDatabase,
+  urlDatabase
+);
 
 const userURLMiddleParser = (req, res, next) => {
   const userID = req.session.user_id;
@@ -42,12 +45,12 @@ app.use(userURLMiddleParser);
 // app.get('/hello', (req, res) => {
 //   const templateVars = {
 //     greeting: 'Hello World!!!!!!',
-//     userEmail: users[req.userId].email,
+//     userEmail: usersDatabase[req.userId].email,
 //   };
 //   res.render('hello_world', templateVars);
 // });
 
-// For '/' page:
+// For '/' route:
 app.get('/', (req, res) => {
   if (req.userId) {
     res.redirect('/urls');
@@ -110,7 +113,7 @@ app.get('/urls', (req, res) => {
   if (req.userId) {
     const templateVars = {
       urls: urlsForUser(req.userId),
-      userEmail: users[req.userId].email,
+      userEmail: usersDatabase[req.userId].email,
     };
     res.render('urls_index', templateVars);
   } else {
@@ -122,7 +125,7 @@ app.get('/urls', (req, res) => {
 // Add new url:(this route must be placed before '/urls/:shortURL')
 app.get('/urls/new', (req, res) => {
   if (req.userId) {
-    const templateVars = { userEmail: users[req.userId].email };
+    const templateVars = { userEmail: usersDatabase[req.userId].email };
     res.render('urls_new', templateVars);
   } else {
     alert('Please login or register a new account');
@@ -152,7 +155,7 @@ app.get('/urls/:shortURL', (req, res) => {
         const templateVars = {
           shortURL: req.params.shortURL,
           longURL: result[req.params.shortURL].longURL,
-          userEmail: users[req.userId].email,
+          userEmail: usersDatabase[req.userId].email,
         };
         return res.render('urls_show', templateVars);
       }
@@ -206,7 +209,7 @@ app.delete('/urls/:shortURL/delete', (req, res) => {
 });
 
 app.get('/users', (req, res) => {
-  res.json(users);
+  res.json(usersDatabase);
 });
 
 app.get('/urls.json', (req, res) => {

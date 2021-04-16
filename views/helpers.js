@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-const allHelperFnClosure = (users, urlDatabase) => {
+const allHelperFnClosure = (users, urls) => {
 
   const generateRandomString = () => {
     return Math.random().toString(36).substring(2, 8);
@@ -9,9 +9,9 @@ const allHelperFnClosure = (users, urlDatabase) => {
   // Help fun: filter urlsObj only for matched userID
   const urlsForUser = (id) => {
     const urlsObj = {};
-    for (let key in urlDatabase) {
-      if (urlDatabase[key].userID === id) {
-        urlsObj[key] = urlDatabase[key];
+    for (let key in urls) {
+      if (urls[key].userID === id) {
+        urlsObj[key] = urls[key];
       }
     }
     return urlsObj;
@@ -36,8 +36,8 @@ const allHelperFnClosure = (users, urlDatabase) => {
     }
     const hashedPassword = bcrypt.hashSync(password, 10);
     const userID = generateRandomString();
-    users[userID] = { id: userID, email, hashedPassword };
-    return { error: null, data: { userID, email, hashedPassword } };
+    users[userID] = { id: userID, email, password: hashedPassword };
+    return { error: null, data: { userID, email, password: hashedPassword } };
   };
 
   const validateLogin = (email, password) => {
@@ -46,7 +46,7 @@ const allHelperFnClosure = (users, urlDatabase) => {
       return { error: 'User not found', data: null };
     }
     const result = bcrypt.compareSync(password, user.password);
-    return user && result ? { error: null, data: user } : { error: 'Passwords do NOT match', data: null };
+    return (user && result) ? { error: null, data: user } : { error: 'Passwords do NOT match', data: null };
   };
 
   return { generateRandomString, urlsForUser, getUserByEmail, createNewUser, validateLogin };

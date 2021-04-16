@@ -6,7 +6,7 @@ const urlDatabase = {
 };
 
 // User Database: (password: user01, user02...so on...)
-const users = {
+const usersDatabase = {
   rHrJoy: {
     id: 'rHrJoy',
     email: 'user01@gmail.com',
@@ -24,4 +24,4 @@ const users = {
   },
 };
 
-module.exports = { urlDatabase , users };
+module.exports = { urlDatabase, usersDatabase };
