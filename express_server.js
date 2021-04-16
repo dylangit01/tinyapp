@@ -55,6 +55,15 @@ const users = {
 // Require helper fns:
 const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allHelperFnClosure(users, urlDatabase);
 
+const userURLMiddleParser = (req, res, next) => {
+  const userID = req.session.user_id;
+  const longURL = req.body.longURL
+  req.userId = userID;
+  req.longURL = longURL;
+  next();
+};
+app.use(userURLMiddleParser);
+
 // For testing route:
 // app.get('/hello', (req, res) => {
 //   const templateVars = {
@@ -64,14 +73,14 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
 //   res.render('hello_world', templateVars);
 // });
 
-const userURLMiddleParser = (req, res, next) => {
-  const userID = req.session.user_id;
-  const longURL = req.body.longURL
-  req.userId = userID;
-  req.longURL = longURL;
-  next();
-};
-app.use(userURLMiddleParser);
+app.get('/', (req, res) => {
+  if (req.userId) {
+    res.redirect('/urls');
+  } else {
+    alert('Please login to access your account');
+    res.redirect('/login');
+  }
+});
 
 // Registration template route:
 app.get('/register', (req, res) => {
@@ -83,8 +92,7 @@ app.get('/register', (req, res) => {
 // Register route:
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
-  const hashedPassword = bcrypt.hashSync(password, 10);
-  const result = createNewUser(email, hashedPassword);
+  const result = createNewUser(email, password);
   if (result.error) {
     return res
       .status(403)

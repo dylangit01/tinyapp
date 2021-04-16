@@ -28,15 +28,16 @@ const allHelperFnClosure = (users, urlDatabase) => {
 
   const createNewUser = (email, password) => {
     if (!email || !password) {
-      return { error: 'Email and Password cannot be empty', data: null };
+      return { error: 'Email and/or Password cannot be empty', data: null };
     }
     const user = getUserByEmail(email);
     if (user) {
       return { error: `User with ${email} already exists, please login or register new account`, data: null };
     }
+    const hashedPassword = bcrypt.hashSync(password, 10);
     const userID = generateRandomString();
-    users[userID] = { id: userID, email, password };
-    return { error: null, data: { userID, email, password } };
+    users[userID] = { id: userID, email, hashedPassword };
+    return { error: null, data: { userID, email, hashedPassword } };
   };
 
   const validateLogin = (email, password) => {
