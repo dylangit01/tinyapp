@@ -2,7 +2,7 @@ const express = require('express');
 const methodOverride = require('method-override');
 const cookieSession = require('cookie-session');
 const alert = require('alert');
-const allHelperFnClosure = require('./views/helpers');
+const allHelperFnClosure = require('./helps/helpers');
 const { urlDatabase, usersDatabase } = require('./database');
 
 const app = express();
