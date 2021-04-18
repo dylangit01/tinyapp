@@ -145,7 +145,7 @@ app.post('/urls', (req, res) => {
     }
     res.redirect(`/urls/${shortURL}`);
   } else {
-    alert('The user is not logged in, please log in first');
+    alert('The user is not logged in, please log in first!');
     res.redirect('/login');
   }
 });
@@ -165,10 +165,10 @@ app.get('/urls/:shortURL', (req, res) => {
         return res.render('urls_show', templateVars);
       }
     }
-    alert(`shortURL: ${shortURL} does not exist`);
+    alert(`shortURL: ${shortURL} does not belongs to this user`);
     res.redirect('/urls');
   } else {
-    alert('Please login or register a new account');
+    alert('The user is not logged in, please login or register a new account');
     res.redirect('/login');
   }
 });
@@ -188,15 +188,23 @@ app.get('/u/:shortURL', (req, res) => {
 app.put('/urls/:id', (req, res) => {
   if (req.userId) {
     const urlID = req.params.id;
-    if (req.longURL) {
-      urlDatabase[urlID].longURL = req.longURL;
-    } else {
-      alert('URL cannot be empty');
-      return res.redirect(`/urls/${urlID}`);
+    const ownerUrls = urlsForUser(req.userId);
+    for (let key in ownerUrls) {
+      if (key === urlID) {
+        if (req.longURL) {
+          ownerUrls[urlID].longURL = req.longURL;
+        } else {
+          alert('URL cannot be empty');
+          return res.redirect(`/urls/${urlID}`);
+        }
+      } else {
+        alert(`shortURL: ${urlID} does not belongs to this user`);
+        res.redirect('/urls');
+      }
     }
     res.redirect('/urls');
   } else {
-    alert('Please login or register a new account');
+    alert('The user is not logged in, please login or register a new account');
     res.redirect('/login');
   }
 });
