@@ -34,7 +34,7 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
 
 const userURLMiddleParser = (req, res, next) => {
   const userID = req.session.user_id;
-  const longURL = req.body.longURL
+  const longURL = req.body.longURL;
   req.userId = userID;
   req.longURL = longURL;
   next();
@@ -94,8 +94,8 @@ app.post('/login', (req, res) => {
   if (result.error) {
     const templateVars = {
       staCode: res.status(403).statusCode,
-      error: result.error
-    }
+      error: result.error,
+    };
     return res.render('error_Msg', templateVars);
   }
   req.session.user_id = result.data.id;
@@ -135,14 +135,19 @@ app.get('/urls/new', (req, res) => {
 
 // Create new url:
 app.post('/urls', (req, res) => {
-  const shortURL = generateRandomString();
-  if (req.longURL) {
-    urlDatabase[shortURL] = { longURL: req.longURL, userID: req.userId };
+  if (req.userId) {
+    const shortURL = generateRandomString();
+    if (req.longURL) {
+      urlDatabase[shortURL] = { longURL: req.longURL, userID: req.userId };
+    } else {
+      alert('URL cannot be empty');
+      return res.redirect('/urls/new');
+    }
+    res.redirect(`/urls/${shortURL}`);
   } else {
-    alert('URL cannot be empty');
-    return res.redirect('/urls/new');
+    alert('The user is not logged in, please log in first');
+    res.redirect('/login');
   }
-  res.redirect(`/urls/${shortURL}`);
 });
 
 // Show added shortURL:
@@ -187,7 +192,7 @@ app.put('/urls/:id', (req, res) => {
       urlDatabase[urlID].longURL = req.longURL;
     } else {
       alert('URL cannot be empty');
-      return res.redirect(`/urls/${urlID}`)
+      return res.redirect(`/urls/${urlID}`);
     }
     res.redirect('/urls');
   } else {
