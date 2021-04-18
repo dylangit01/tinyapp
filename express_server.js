@@ -165,7 +165,7 @@ app.get('/urls/:shortURL', (req, res) => {
         return res.render('urls_show', templateVars);
       }
     }
-    alert(`shortURL: ${shortURL} does not belongs to this user`);
+    alert(`shortURL: ${shortURL} does not belong to this user`);
     res.redirect('/urls');
   } else {
     alert('The user is not logged in, please login or register a new account');
@@ -189,19 +189,18 @@ app.put('/urls/:id', (req, res) => {
   if (req.userId) {
     const urlID = req.params.id;
     const ownerUrls = urlsForUser(req.userId);
-    for (let key in ownerUrls) {
+    for (const key in ownerUrls) {
       if (key === urlID) {
         if (req.longURL) {
           ownerUrls[urlID].longURL = req.longURL;
+          return res.redirect(`/urls/${urlID}`);
         } else {
           alert('URL cannot be empty');
           return res.redirect(`/urls/${urlID}`);
         }
-      } else {
-        alert(`shortURL: ${urlID} does not belongs to this user`);
-        res.redirect('/urls');
       }
     }
+    alert(`shortURL: ${urlID} does not belong to this user`);
     res.redirect('/urls');
   } else {
     alert('The user is not logged in, please login or register a new account');
@@ -212,9 +211,16 @@ app.put('/urls/:id', (req, res) => {
 // Delete a url:
 app.delete('/urls/:shortURL/delete', (req, res) => {
   if (req.userId) {
-    const key = req.params.shortURL;
-    delete urlDatabase[key];
-    res.redirect('/urls');
+    const shortURL = req.params.shortURL;
+    const ownerUrls = urlsForUser(req.userId);
+    for (let key in ownerUrls) {
+      if (key === shortURL) {
+        delete urlDatabase[key];
+        return res.redirect('/urls');
+      }
+    }
+    alert(`shortURL: ${shortURL} does not belong to this user`);
+    return res.redirect('/urls');
   } else {
     alert('Please login or register a new account');
     res.redirect('/login');
