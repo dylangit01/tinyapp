@@ -22,8 +22,6 @@ app.use(
 // for body-parser:
 app.use(express.json({ extended: true }));
 app.use(express.urlencoded({ extended: true }));
-
-// Set EJS engine:
 app.set('view engine', 'ejs');
 
 // Require helper fns:
@@ -41,16 +39,6 @@ const userURLMiddleParser = (req, res, next) => {
 };
 app.use(userURLMiddleParser);
 
-// For testing route:
-// app.get('/hello', (req, res) => {
-//   const templateVars = {
-//     greeting: 'Hello World!!!!!!',
-//     userEmail: usersDatabase[req.userId].email,
-//   };
-//   res.render('hello_world', templateVars);
-// });
-
-// For '/' route:
 app.get('/', (req, res) => {
   if (req.userId) {
     res.redirect('/urls');
@@ -60,14 +48,12 @@ app.get('/', (req, res) => {
   }
 });
 
-// Registration template route:
 app.get('/register', (req, res) => {
   if (!req.userId) {
     res.render('user_registration');
   } else res.redirect('/urls');
 });
 
-// Register route:
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
   const result = createNewUser(email, password);
@@ -82,12 +68,13 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
-// Login template route:
 app.get('/login', (req, res) => {
-  res.render('user_login');
+  if (req.userId) {
+     return res.redirect('/urls')
+  }
+  return res.render('user_login');
 });
 
-// Login route:
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const result = validateLogin(email, password);
@@ -102,13 +89,11 @@ app.post('/login', (req, res) => {
   res.redirect('/urls');
 });
 
-// Logout route:
 app.post('/logout', (req, res) => {
   res.clearCookie('session');
   res.redirect('/login');
 });
 
-// Show all urls:
 app.get('/urls', (req, res) => {
   if (req.userId) {
     const templateVars = {
@@ -133,7 +118,6 @@ app.get('/urls/new', (req, res) => {
   }
 });
 
-// Create new url:
 app.post('/urls', (req, res) => {
   if (req.userId) {
     const shortURL = generateRandomString();
@@ -150,7 +134,6 @@ app.post('/urls', (req, res) => {
   }
 });
 
-// Show added shortURL:
 app.get('/urls/:shortURL', (req, res) => {
   if (req.userId) {
     const shortURL = req.params.shortURL;
@@ -173,7 +156,6 @@ app.get('/urls/:shortURL', (req, res) => {
   }
 });
 
-// Redirect to longURL:
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]?.longURL;
   if (longURL) {
@@ -184,7 +166,6 @@ app.get('/u/:shortURL', (req, res) => {
   }
 });
 
-// Update a url:
 app.put('/urls/:id', (req, res) => {
   if (req.userId) {
     const urlID = req.params.id;
@@ -208,7 +189,6 @@ app.put('/urls/:id', (req, res) => {
   }
 });
 
-// Delete a url:
 app.delete('/urls/:shortURL/delete', (req, res) => {
   if (req.userId) {
     const shortURL = req.params.shortURL;
@@ -225,14 +205,6 @@ app.delete('/urls/:shortURL/delete', (req, res) => {
     alert('Please login or register a new account');
     res.redirect('/login');
   }
-});
-
-app.get('/users', (req, res) => {
-  res.json(usersDatabase);
-});
-
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
 });
 
 app.listen(PORT, () => {
