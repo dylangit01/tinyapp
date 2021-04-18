@@ -41,11 +41,9 @@ app.use(userURLMiddleParser);
 
 app.get('/', (req, res) => {
   if (req.userId) {
-    res.redirect('/urls');
-  } else {
-    alert('Please login to access your account');
-    res.redirect('/login');
+    return res.redirect('/urls');
   }
+  return res.redirect('/login');
 });
 
 app.get('/register', (req, res) => {
@@ -70,7 +68,7 @@ app.post('/register', (req, res) => {
 
 app.get('/login', (req, res) => {
   if (req.userId) {
-     return res.redirect('/urls')
+    return res.redirect('/urls');
   }
   return res.render('user_login');
 });
