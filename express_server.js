@@ -5,6 +5,7 @@ const alert = require('alert');
 const allHelperFnClosure = require('./helps/helpers');
 const { urlDatabase, usersDatabase } = require('./database');
 
+// Set up express & PORT
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -30,6 +31,7 @@ const { generateRandomString, urlsForUser, createNewUser, validateLogin } = allH
   urlDatabase
 );
 
+// Setup url-middleware for all routes
 const userURLMiddleParser = (req, res, next) => {
   const userID = req.session.user_id;
   const longURL = req.body.longURL;
@@ -46,12 +48,14 @@ app.get('/', (req, res) => {
   return res.redirect('/login');
 });
 
+// For register template route:
 app.get('/register', (req, res) => {
   if (!req.userId) {
     res.render('user_registration');
   } else res.redirect('/urls');
 });
 
+// For posting registration route:
 app.post('/register', (req, res) => {
   const { email, password } = req.body;
   const result = createNewUser(email, password);
@@ -66,6 +70,7 @@ app.post('/register', (req, res) => {
   res.redirect('/urls');
 });
 
+// For login template route
 app.get('/login', (req, res) => {
   if (req.userId) {
     return res.redirect('/urls');
@@ -73,6 +78,7 @@ app.get('/login', (req, res) => {
   return res.render('user_login');
 });
 
+// For posting login route:
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
   const result = validateLogin(email, password);
@@ -92,6 +98,7 @@ app.post('/logout', (req, res) => {
   res.redirect('/login');
 });
 
+// Main page route:
 app.get('/urls', (req, res) => {
   if (req.userId) {
     const templateVars = {
@@ -116,6 +123,7 @@ app.get('/urls/new', (req, res) => {
   }
 });
 
+// For creating new url route:
 app.post('/urls', (req, res) => {
   if (req.userId) {
     const shortURL = generateRandomString();
@@ -132,6 +140,7 @@ app.post('/urls', (req, res) => {
   }
 });
 
+// For displaying new created url route:
 app.get('/urls/:shortURL', (req, res) => {
   if (req.userId) {
     const shortURL = req.params.shortURL;
@@ -154,6 +163,7 @@ app.get('/urls/:shortURL', (req, res) => {
   }
 });
 
+// For showing long url page of shortURL route:
 app.get('/u/:shortURL', (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]?.longURL;
   if (longURL) {
@@ -164,6 +174,7 @@ app.get('/u/:shortURL', (req, res) => {
   }
 });
 
+// For updating urls route:
 app.put('/urls/:id', (req, res) => {
   if (req.userId) {
     const urlID = req.params.id;
@@ -187,6 +198,7 @@ app.put('/urls/:id', (req, res) => {
   }
 });
 
+// For deleting url route:
 app.delete('/urls/:shortURL/delete', (req, res) => {
   if (req.userId) {
     const shortURL = req.params.shortURL;
