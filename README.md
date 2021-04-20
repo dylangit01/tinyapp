@@ -26,3 +26,4 @@ TinyApp is a full stack web application built with Node and Express that allows 
 - Run the development web server using the `node start` command.
 - Run the development web server with nodemon using the `npm run dev` command.
 - Run the Mocha/Chai testing using the `npm test` command.
+- **Note: "?" optional chaining syntax only be supported by node version v14+.
