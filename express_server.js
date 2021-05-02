@@ -217,6 +217,10 @@ app.delete('/urls/:shortURL/delete', (req, res) => {
   }
 });
 
+app.get('/urls.json', (req, res) => {
+  res.send(urlDatabase)
+})
+
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}!`);
 });
